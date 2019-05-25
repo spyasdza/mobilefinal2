@@ -46,7 +46,7 @@ class User {
   }
 }
 
-class UserBase {
+class UserDB {
   Database db;
 
   Future open(String path) async {
@@ -86,10 +86,6 @@ class UserBase {
     return maps.length > 0 ? new User.formMap(maps.first) : null;
   }
 
-  Future<int> deleteUser(int id) async {
-    return await db.delete(userTable, where: '$idColumn = ?', whereArgs: [id]);
-  }
-
   Future<int> updateUser(User user) async {
     return db.update(userTable, user.toMap(),
         where: '$idColumn = ?', whereArgs: [user.id]);
@@ -105,8 +101,7 @@ class UserBase {
       passwordColumn,
       quoteColumn
     ]);
-    List<User> listUser =
-        res.isNotEmpty ? res.map((c) => User.formMap(c)).toList() : [];
+    List<User> listUser = res.isNotEmpty ? res.map((c) => User.formMap(c)).toList() : [];
     return listUser;
   }
 

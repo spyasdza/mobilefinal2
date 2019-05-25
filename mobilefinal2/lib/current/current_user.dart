@@ -5,8 +5,4 @@ class CurrentUser {
   static var age;
   static var password;
   static var quote;
-
-  static String currentUser() {
-    return "current -> _id: $id, userid: $userId, name: $name, age: $age, password: $password, quote: $quote";
-  }
 }

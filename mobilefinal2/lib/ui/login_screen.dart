@@ -1,5 +1,6 @@
 import 'package:toast/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../db/user.dart';
 import '../current/current_user.dart';
 
@@ -11,13 +12,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  String haveUser = '';
+  
+
+  Future<int> _getIntFromSharedPref() async{
+
+  }
+
   final _formkey = GlobalKey<FormState>();
-  UserBase user = UserBase();
+  UserDB user = UserDB();
   final userid = TextEditingController();
   final userpassword = TextEditingController();
   bool isValid = false;
   int count = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,11 +74,11 @@ class LoginScreenState extends State<LoginScreen> {
                 await user.open("user.db");
                 Future<List<User>> allUser = user.getAllUser();
 
-                Future isUserValid(String userid, String password) async {
+                Future isValid(String userid, String userpassword) async {
                   var userList = await allUser;
                   for (var i = 0; i < userList.length; i++) {
                     if (userid == userList[i].userid &&
-                        password == userList[i].password) {
+                        userpassword == userList[i].password) {
                       CurrentUser.id = userList[i].id;
                       CurrentUser.userId = userList[i].userid;
                       CurrentUser.name = userList[i].name;
@@ -86,21 +93,21 @@ class LoginScreenState extends State<LoginScreen> {
 
                 if (this.count != 2) {
                   Toast.show("Please fill out this form", context,
-                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                      duration: Toast.LENGTH_LONG);
                   this.count = 0;
                 } else {
                   this.count = 0;
-                  await isUserValid(userid.text, userpassword.text);
-                  if (!this.isValid) {
-                    Toast.show("Invalid user or password", context,
-                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                  } else {
+                  await isValid(userid.text, userpassword.text);
+                  if (this.isValid) {
+
                     Navigator.pushReplacementNamed(context, '/home');
                     userid.text = "";
                     userpassword.text = "";
+                  } else {
+                    Toast.show("Invalid user or password", context,
+                        duration: Toast.LENGTH_LONG);
                   }
                 }
-                print(CurrentUser.currentUser()); //will delete
               },
             ),
             Container(
